@@ -11,8 +11,8 @@ on:
     types: [ opened, synchronize ]
     paths: [ '**.cs' ]
   # Trigger: Ejecuta el workflow automáticamente todos los días a las 19:30 UTC (programado por cron)
-  schedule:
-    - cron: '30 19 * * *'
+  # schedule:
+  #   - cron: '30 19 * * *'
 
 jobs:
   build:
