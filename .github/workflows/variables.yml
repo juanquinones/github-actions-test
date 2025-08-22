@@ -1,0 +1,26 @@
+name: Variables
+run-name: ${{ github.event_name }} - ${{ github.ref }}
+
+on:
+    push:
+        branches: [ main ]
+    workflow_dispatch:
+
+env:
+  Color_Ojos: 'Marron'
+  Color_Cabello: 'Castaño'
+
+jobs:
+  check-variables:
+    runs-on: ubuntu-latest
+    env:
+      Edad: 29
+    steps:
+        - name: Mostrar variables de entorno
+          run: |
+            echo "Datos del usuario:"
+            echo "Nombre: ${{ vars.NOMBRE }}"
+            echo "Usuario: ${{ github.actor }}"
+            echo "Color de ojos: ${{ env.Color_Ojos }}"
+            echo "Color de cabello: ${{ env.Color_Cabello }}"
+            echo "Edad: $Edad"
