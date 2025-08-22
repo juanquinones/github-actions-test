@@ -1,0 +1,42 @@
+name: Triggers
+run-name: ${{ github.event_name }} - ${{ github.ref }}
+
+on:
+  # Trigger: Ejecuta el workflow cuando se realiza un push a la rama 'main'
+  push:
+    branches: [ main ]
+  # Trigger: Ejecuta el workflow solo cuando se abre o actualiza un pull request que modifica archivos .cs
+  # Nota: Solo aplica a PRs que afectan archivos C# y los eventos 'opened' y 'synchronize'
+  pull_request:
+    types: [ opened, synchronize ]
+    paths: [ '**.cs' ]
+  # Trigger: Ejecuta el workflow automáticamente todos los días a las 19:30 UTC (programado por cron)
+  # schedule:
+  #   - cron: '30 19 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Descarga el código fuente del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Instala .NET SDK para compilar y ejecutar C#
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+
+      # Crea un proyecto de consola, reemplaza Program.cs por HelloWorld.cs y compila
+      - name: Compile HelloWorld.cs
+        run: |
+          dotnet new console -o HelloWorldApp --force
+          mv HelloWorld.cs HelloWorldApp/Program.cs
+          cd HelloWorldApp
+          dotnet build
+
+      # Ejecuta el programa HelloWorld
+      - name: Run HelloWorld
+        run: cd HelloWorldApp && dotnet run

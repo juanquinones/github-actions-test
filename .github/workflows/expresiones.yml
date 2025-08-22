@@ -1,0 +1,44 @@
+name: Expresiones
+run-name: Calculo de Areas
+
+on: [push, pull_request]
+
+env:
+  # Constante PI
+  PI: 3.14159
+  # Radio de la Tierra en kilómetros
+  Radio_Tierra: 6371
+  # Constante radio del sol
+  Radio_Sol: 695508
+
+jobs:
+  calcular-areas:
+    runs-on: ubuntu-latest
+    outputs:
+      area_tierra: ${{ steps.area_tierra.outputs.value }}
+      area_sol: ${{ steps.area_sol.outputs.value }}
+    steps:
+      - name: Calcular el área de la Tierra
+        id: area_tierra
+        run: |
+          area=$(echo "4 * ${{ env.PI }} * ${{ env.Radio_Tierra }} * ${{ env.Radio_Tierra }}" | bc -l)
+          echo "value=$area" >> $GITHUB_OUTPUT
+      - name: Calcular el área del Sol
+        id: area_sol
+        run: |
+          area=$(echo "4 * ${{ env.PI }} * ${{ env.Radio_Sol }} * ${{ env.Radio_Sol }}" | bc -l)
+          echo "value=$area" >> $GITHUB_OUTPUT
+  area_mayor:
+    needs: [calcular-areas]
+    if: ${{ needs.calcular-areas.outputs.area_tierra > needs.calcular-areas.outputs.area_sol }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Calcular el área mayor
+        run: echo "El área mayor es el del Sol"
+  area_menor:
+    needs: [calcular-areas]
+    if: ${{ needs.calcular-areas.outputs.area_tierra < needs.calcular-areas.outputs.area_sol }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Calcular el área menor
+        run: echo "El área menor es el de la Tierra"

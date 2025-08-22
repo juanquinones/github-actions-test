@@ -1,0 +1,35 @@
+name: Hola Mundo
+run-name: ${{ github.event_name }} - ${{ github.ref }}
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Descarga el código fuente del repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Instala .NET SDK para compilar y ejecutar C#
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+
+      # Crea un proyecto de consola, reemplaza Program.cs por HelloWorld.cs y compila
+      - name: Compile HelloWorld.cs
+        run: |
+          dotnet new console -o HelloWorldApp --force
+          mv HelloWorld.cs HelloWorldApp/Program.cs
+          cd HelloWorldApp
+          dotnet build
+
+      # Ejecuta el programa HelloWorld
+      - name: Run HelloWorld
+        run: cd HelloWorldApp && dotnet run
